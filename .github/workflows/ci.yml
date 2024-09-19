@@ -17,11 +17,11 @@ jobs:
 
     services:
       postgres:
-        image: postgres:14-alpine
+        image: postgres
         env:
           POSTGRES_USER: root
           POSTGRES_PASSWORD: secret
-          POSTGRES_DB: Bank
+          POSTGRES_DB: bank
         ports:
           - 5432:5432
         options: >-
