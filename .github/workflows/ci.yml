@@ -5,9 +5,9 @@ name: Go
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ master ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ master ]
 
 jobs:
 
@@ -17,13 +17,13 @@ jobs:
 
     services:
       postgres:
-        image: postgres
+        image: postgres:14-alpine
         env:
           POSTGRES_USER: root
           POSTGRES_PASSWORD: secret
-          POSTGRES_DB: Bank
+          POSTGRES_DB: simple_bank
         ports:
-        - 5432:5432
+          - 5432:5432
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -31,12 +31,15 @@ jobs:
           --health-retries 5
 
     steps:
-    - uses: actions/checkout@v4
 
-    - name: Set up Go
-      uses: actions/setup-go@v4
+    - name: Set up Go 1.x
+      uses: actions/setup-go@v2
       with:
-        go-version: '1.20'
+        go-version: ^1.22
+      id: go
+
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v2
 
     - name: Install golang-migrate
       run: | 
