@@ -38,15 +38,20 @@ func NewServer(config util.Config, store db.Store) (*Server, error) {
 		v.RegisterValidation("currency", validCurrency)
 	}
 
-	router.POST("/accounts", server.createAccount)
-	router.GET("/accounts/:id", server.getAccount)
-	router.GET("/accounts", server.listAccounts)
-	router.PUT("/accounts", server.updateAccount)
-	router.DELETE("/accounts", server.deleteAccount)
-	router.POST("/transfers", server.createTransfer)
+	// dont need auth middleware 
 	router.POST("/users", server.createUser)
-	router.GET("/users", server.getUser)
 	router.POST("/users/login", server.loginUser)
+
+	authRoutes := router.Group("/").Use(authMiddleware(server.tokenMaker))
+
+	authRoutes.POST("/accounts", server.createAccount)
+	authRoutes.GET("/accounts/:id", server.getAccount)
+	authRoutes.GET("/accounts", server.listAccounts)
+	authRoutes.PUT("/accounts", server.updateAccount)
+	authRoutes.DELETE("/accounts", server.deleteAccount)
+	authRoutes.POST("/transfers", server.createTransfer)
+	authRoutes.GET("/users", server.getUser)
+	
 
 	server.router = router
 	return server, nil
